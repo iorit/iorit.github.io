@@ -1,0 +1,39 @@
+baseURL: https://iorit.github.io/
+locale: zh-cn
+title: iorit 的博客
+theme: PaperMod
+
+enableRobotsTXT: true
+
+params:
+  profileMode:
+    enabled: false
+  homeInfoParams:
+    Title: "你好,我是 iorit 👋"
+    Content: 欢迎来到我的博客,这里记录我的学习与生活。
+  socialIcons:
+    - name: github
+      url: "https://github.com/iorit"
+  ShowReadingTime: true
+  ShowShareButtons: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowToc: true
+  TocOpen: false
+  defaultTheme: auto
+
+menu:
+  main:
+    - identifier: archives
+      name: 归档
+      url: /archives/
+      weight: 10
+    - identifier: tags
+      name: 标签
+      url: /tags/
+      weight: 20
+    - identifier: about
+      name: 关于
+      url: /about/
+      weight: 30
