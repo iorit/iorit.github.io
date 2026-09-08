@@ -50,11 +50,7 @@ function walk(dir, rel, out) {
 }
 
 function enc(segments) {
-    let s = segments;
-    if (s.length >= 2 && s[0] === "posts" && s[1] === "过往") {
-        s = s.slice(1);
-    }
-    return "/" + s.map(x => encodeURIComponent(x)).join("/") + "/";
+    return "/" + segments.map(s => encodeURIComponent(s)).join("/") + "/";
 }
 
 function render(items, segments, depth) {

@@ -3,15 +3,10 @@ locale: zh-cn
 title: iorit 的博客
 theme: PaperMod
 
-cascade:
-  - _target:
-      path: /posts/过往/**
-    url: /过往/:filename/
-
 enableRobotsTXT: true
 
 params:
-  mainSections: ["posts"]
+  mainSections: ["posts", "过往"]
   profileMode:
     enabled: false
   homeInfoParams:
