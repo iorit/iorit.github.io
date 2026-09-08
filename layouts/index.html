@@ -1,0 +1,42 @@
+{{- define "main" }}
+
+{{- if and site.Params.homeInfoParams (eq .Paginator.PageNumber 1) }}
+{{- partial "home_info.html" . }}
+{{- end }}
+
+<header class="page-header">
+  <h1>📁 站点文件夹</h1>
+  <div class="post-description">点击文件夹进入浏览文章</div>
+</header>
+
+{{- $rootPages := slice }}
+{{- range $s := site.Sections }}
+  {{- $rootPages = $rootPages | append $s }}
+  {{- range $sub := $s.Sections }}
+    {{- $rootPages = $rootPages | append $sub }}
+  {{- end }}
+{{- end }}
+
+<div class="folder-grid">
+{{- range $f := $rootPages }}
+  <a class="folder-card" href="{{ $f.RelPermalink }}">
+    <div class="folder-icon">📁</div>
+    <div class="folder-name">{{ $f.Title }}</div>
+    {{- if $f.Description }}
+    <div class="folder-desc">{{ $f.Description }}</div>
+    {{- end }}
+    <div class="folder-count">{{ len $f.RegularPages }} 篇</div>
+  </a>
+{{- end }}
+{{- range $p := where site.RegularPages "Section" "" }}
+  <a class="folder-card folder-file" href="{{ $p.RelPermalink }}">
+    <div class="folder-icon">📄</div>
+    <div class="folder-name">{{ $p.Title }}</div>
+    {{- if $p.Description }}
+    <div class="folder-desc">{{ $p.Description }}</div>
+    {{- end }}
+  </a>
+{{- end }}
+</div>
+
+{{- end }}{{- /* end main */ -}}

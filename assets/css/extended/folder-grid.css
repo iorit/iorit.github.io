@@ -1,0 +1,52 @@
+.folder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+}
+
+.folder-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--entry);
+    color: var(--content);
+    text-align: center;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.folder-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    border-color: var(--secondary);
+}
+
+.folder-icon {
+    font-size: 44px;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.folder-name {
+    font-size: 1.15em;
+    font-weight: 600;
+}
+
+.folder-desc {
+    margin-top: 6px;
+    font-size: 0.85em;
+    color: var(--secondary);
+}
+
+.folder-count {
+    margin-top: 8px;
+    font-size: 0.8em;
+    color: var(--secondary);
+    background: var(--code-bg);
+    padding: 2px 10px;
+    border-radius: 10px;
+}
