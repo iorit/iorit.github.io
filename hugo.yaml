@@ -53,3 +53,7 @@ menu:
       name: 关于
       url: /about/
       weight: 30
+    - identifier: tree
+      name: 文件结构
+      url: /tree/
+      weight: 40
