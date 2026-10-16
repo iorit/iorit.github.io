@@ -6,7 +6,7 @@ const contentDir = path.join(root, "content");
 const outDir = path.join(root, "static", "tree");
 const outFile = path.join(outDir, "index.html");
 
-const SKIP = new Set(["tree"]);
+const SKIP = new Set(["tree", "image"]);
 
 function readTitle(file) {
     try {
@@ -43,14 +43,16 @@ function walk(dir, rel, out) {
         out.push({ type: "dir", name: d.name, rel: rel + "/" + d.name, children: sub });
     }
     for (const f of files) {
+        const full = path.join(dir, f.name);
+        if (fs.statSync(full).size === 0) continue;
         const name = f.name.replace(/\.md$/, "");
-        const title = readTitle(path.join(dir, f.name));
+        const title = readTitle(full);
         out.push({ type: "file", name: name, rel: rel + "/" + name, title });
     }
 }
 
 function enc(segments) {
-    return "/" + segments.map(s => encodeURIComponent(s)).join("/") + "/";
+    return "/" + segments.map(s => encodeURIComponent(s.toLowerCase())).join("/") + "/";
 }
 
 function render(items, segments, depth) {

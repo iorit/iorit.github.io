@@ -3,6 +3,25 @@ locale: zh-cn
 title: iorit 的博客
 theme: PaperMod
 
+module:
+  mounts:
+    - source: archetypes
+      target: archetypes
+    - source: assets
+      target: assets
+    - source: content
+      target: content
+    - source: data
+      target: data
+    - source: i18n
+      target: i18n
+    - source: layouts
+      target: layouts
+    - source: static
+      target: static
+    - source: content/posts/image
+      target: assets/image
+
 enableRobotsTXT: true
 
 params:
@@ -33,9 +52,13 @@ markup:
           block:
             - - \[
               - \]
+            - - $$
+              - $$
           inline:
             - - \(
               - \)
+            - - $
+              - $
     renderer:
       unsafe: true
 
