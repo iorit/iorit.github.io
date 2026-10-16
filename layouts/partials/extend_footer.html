@@ -1,0 +1,26 @@
+{{- /* ============================================================
+     全站动态壁纸
+     用法:把壁纸文件放入 assets/wallpaper/,命名 wallpaper.<ext>
+     支持:mp4 / webm(视频)、gif / webp / jpg / jpeg / png(图片)
+     删除该文件即可恢复无壁纸状态
+     ============================================================ */ -}}
+{{- $wp := resources.Get "wallpaper/wallpaper.mp4" -}}
+{{- if not $wp }}{{ $wp = resources.Get "wallpaper/wallpaper.webm" }}{{ end -}}
+{{- if not $wp }}{{ $wp = resources.Get "wallpaper/wallpaper.gif" }}{{ end -}}
+{{- if not $wp }}{{ $wp = resources.Get "wallpaper/wallpaper.webp" }}{{ end -}}
+{{- if not $wp }}{{ $wp = resources.Get "wallpaper/wallpaper.avif" }}{{ end -}}
+{{- if not $wp }}{{ $wp = resources.Get "wallpaper/wallpaper.jpg" }}{{ end -}}
+{{- if not $wp }}{{ $wp = resources.Get "wallpaper/wallpaper.jpeg" }}{{ end -}}
+{{- if not $wp }}{{ $wp = resources.Get "wallpaper/wallpaper.png" }}{{ end -}}
+{{- with $wp -}}
+{{- $wp = . | fingerprint -}}
+{{- $ext := lower (path.Ext $wp.RelPermalink) -}}
+<div id="bg-wallpaper" aria-hidden="true">
+    {{- if or (eq $ext ".mp4") (eq $ext ".webm") }}
+    <video autoplay muted loop playsinline preload="metadata" src="{{ $wp.RelPermalink }}"></video>
+    {{- else }}
+    <img src="{{ $wp.RelPermalink }}" alt="">
+    {{- end }}
+    <div class="bg-overlay"></div>
+</div>
+{{- end -}}
