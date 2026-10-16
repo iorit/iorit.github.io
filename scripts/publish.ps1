@@ -98,9 +98,22 @@ if ($LASTEXITCODE -ne 0) {
 Write-Ok "已提交:$commitMsg"
 
 Write-Info "推送到 GitHub..."
+
+# 读取 Windows 系统代理设置(若开着代理会自动使用)
+$proxyReg = Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" -ErrorAction SilentlyContinue
+$useProxy = ($proxyReg.ProxyEnable -eq 1) -and $proxyReg.ProxyServer
+$proxyArg = @()
+if ($useProxy) {
+    $proxyUrl = "http://" + $proxyReg.ProxyServer
+    Write-Info "检测到系统代理:$proxyUrl"
+    $proxyArg = @("-c", "http.proxy=$proxyUrl", "-c", "https.proxy=$proxyUrl")
+} else {
+    Write-Info "未检测到系统代理,使用直连"
+}
+
 $pushed = $false
 for ($i = 1; $i -le 3; $i++) {
-    $pushLog = & git push 2>&1
+    $pushLog = & git @proxyArg push 2>&1
     if ($LASTEXITCODE -eq 0) { $pushed = $true; break }
     if ($i -lt 3) {
         Write-Warn "推送失败(第 $i 次),5 秒后重试..."
@@ -108,7 +121,7 @@ for ($i = 1; $i -le 3; $i++) {
     }
 }
 if (-not $pushed) {
-    Write-Err "推送失败,请检查网络后再运行本脚本。输出:"
+    Write-Err "推送失败。若无法直连 GitHub,请先开启代理软件再运行本脚本。输出:"
     $pushLog | ForEach-Object { Write-Host $_ }
     exit 1
 }
