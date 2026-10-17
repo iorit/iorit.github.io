@@ -1,0 +1,26 @@
+/* 深色模式下所有文字统一提亮为纯白 */
+:root[data-theme="dark"] {
+    --primary: #ffffff;
+    --secondary: #ffffff;
+    --content: #ffffff;
+}
+
+/* 代码块内的文字也提亮(保持代码高亮的语法色,只提基础色) */
+:root[data-theme="dark"] .post-content,
+:root[data-theme="dark"] .md-content {
+    color: #ffffff;
+}
+
+/* 列表描述、meta 等次级文字同步提亮 */
+:root[data-theme="dark"] .entry-content,
+:root[data-theme="dark"] .entry-footer,
+:root[data-theme="dark"] .post-meta,
+:root[data-theme="dark"] .post-description,
+:root[data-theme="dark"] .archive-meta,
+:root[data-theme="dark"] .archive-count,
+:root[data-theme="dark"] .paginav .title,
+:root[data-theme="dark"] .footer,
+:root[data-theme="dark"] .folder-desc,
+:root[data-theme="dark"] .folder-count {
+    color: #ffffff;
+}
