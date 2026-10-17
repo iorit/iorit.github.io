@@ -33,11 +33,10 @@
     background: rgba(0, 0, 0, 0.45);
 }
 
-/* 浅色模式:壁纸柔化虚化,避免生硬色块和发灰观感 */
+/* 浅色模式:壁纸提亮、降饱和,保持清晰但观感更轻盈 */
 :root[data-theme="light"] #bg-wallpaper video,
 :root[data-theme="light"] #bg-wallpaper img {
-    filter: blur(22px) brightness(1.06) saturate(1.05);
-    transform: scale(1.06);
+    filter: brightness(1.18) saturate(0.85);
 }
 
 /* 浅色模式下正文加白字影,降低遮罩后仍然清晰 */
