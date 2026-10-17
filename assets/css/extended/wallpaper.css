@@ -60,3 +60,29 @@ body:has(#bg-wallpaper) .searchResults li {
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
 }
+
+/* 首页问候区:去掉大卡片外观,紧凑地融入页面 */
+body:has(#bg-wallpaper) .home-info.first-entry {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    min-height: auto;
+    margin: calc(var(--gap) * 2) 0 var(--gap) 0;
+}
+
+:root[data-theme="dark"] body:has(#bg-wallpaper) .home-info.first-entry {
+    background: transparent;
+}
+
+body:has(#bg-wallpaper) .home-info .entry-header h1 {
+    font-size: 30px;
+}
+
+body:has(#bg-wallpaper) .home-info .entry-content {
+    margin-top: 6px;
+    color: var(--secondary);
+}
+
+body:has(#bg-wallpaper) .home-info .entry-footer {
+    margin-top: 4px;
+}
