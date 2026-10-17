@@ -68,16 +68,17 @@ body:has(#bg-wallpaper) .post-single .post-content {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
 }
 
+/* 文章底部工具条:只做半透明,不用 backdrop-filter(避免滚动时壁纸被重新合成导致变暗) */
 body:has(#bg-wallpaper) details.toc,
 body:has(#bg-wallpaper) .paginav,
+body:has(#bg-wallpaper) .share-buttons,
 body:has(#bg-wallpaper) .searchResults li {
     background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
 }
 
 :root[data-theme="dark"] body:has(#bg-wallpaper) details.toc,
 :root[data-theme="dark"] body:has(#bg-wallpaper) .paginav,
+:root[data-theme="dark"] body:has(#bg-wallpaper) .share-buttons,
 :root[data-theme="dark"] body:has(#bg-wallpaper) .searchResults li {
     background: rgba(46, 46, 51, 0.6);
 }
