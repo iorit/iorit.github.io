@@ -39,17 +39,6 @@
     filter: brightness(1.18) saturate(0.85);
 }
 
-/* 浅色模式下正文加白字影,降低遮罩后仍然清晰 */
-:root[data-theme="light"] body:has(#bg-wallpaper) .post-title,
-:root[data-theme="light"] body:has(#bg-wallpaper) .post-content,
-:root[data-theme="light"] body:has(#bg-wallpaper) .post-meta,
-:root[data-theme="light"] body:has(#bg-wallpaper) .home-info .entry-header h1,
-:root[data-theme="light"] body:has(#bg-wallpaper) .home-info .entry-content,
-:root[data-theme="light"] body:has(#bg-wallpaper) .page-header h1,
-:root[data-theme="light"] body:has(#bg-wallpaper) .page-header .post-description {
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 10px rgba(255, 255, 255, 0.7);
-}
-
 @media (prefers-reduced-motion: reduce) {
     #bg-wallpaper video {
         display: none;
