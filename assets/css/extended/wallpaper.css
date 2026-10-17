@@ -26,11 +26,29 @@
 #bg-wallpaper .bg-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 :root[data-theme="dark"] #bg-wallpaper .bg-overlay {
     background: rgba(0, 0, 0, 0.45);
+}
+
+/* 浅色模式:壁纸柔化虚化,避免生硬色块和发灰观感 */
+:root[data-theme="light"] #bg-wallpaper video,
+:root[data-theme="light"] #bg-wallpaper img {
+    filter: blur(22px) brightness(1.06) saturate(1.05);
+    transform: scale(1.06);
+}
+
+/* 浅色模式下正文加白字影,降低遮罩后仍然清晰 */
+:root[data-theme="light"] body:has(#bg-wallpaper) .post-title,
+:root[data-theme="light"] body:has(#bg-wallpaper) .post-content,
+:root[data-theme="light"] body:has(#bg-wallpaper) .post-meta,
+:root[data-theme="light"] body:has(#bg-wallpaper) .home-info .entry-header h1,
+:root[data-theme="light"] body:has(#bg-wallpaper) .home-info .entry-content,
+:root[data-theme="light"] body:has(#bg-wallpaper) .page-header h1,
+:root[data-theme="light"] body:has(#bg-wallpaper) .page-header .post-description {
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 0 10px rgba(255, 255, 255, 0.7);
 }
 
 @media (prefers-reduced-motion: reduce) {
