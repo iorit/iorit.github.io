@@ -34,6 +34,10 @@ params:
   socialIcons:
     - name: github
       url: "https://github.com/iorit"
+    - name: zhihu
+      url: "https://www.zhihu.com/people/iorit"
+    - name: bilibili
+      url: "https://space.bilibili.com/474634110"
   ShowReadingTime: true
   ShowShareButtons: true
   ShowPostNavLinks: true

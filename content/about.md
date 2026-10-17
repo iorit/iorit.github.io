@@ -1,8 +1,11 @@
 ---
-date: '2026-09-02T17:02:21+08:00'
+date: 2026-09-02T17:02:21+08:00
 draft: false
 title: 关于我
 ---
+这里是iorit，有时别称CrabRider27。
+这个博客由 DeekSeek V4.1Flash Vibe Coding制作。
+我的Bilibili账号：[iorit](https://space.bilibili.com/474634110?spm_id_from=333.1007.0.0)
 
 你好,我是 **iorit** 👋
 
