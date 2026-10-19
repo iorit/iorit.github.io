@@ -22,7 +22,7 @@
 <img
   {{- range $k, $v := $attributes -}}
     {{- if $v -}}
-      {{- printf " %s=%q" $k $v | safeHTMLAttr -}}
+      {{- printf " %s=%q" $k (printf "%v" $v) | safeHTMLAttr -}}
     {{- end -}}
   {{- end -}}>
 {{- /**/ -}}

@@ -66,6 +66,9 @@ if (-not (Test-Path $hugo)) {
 # 重新生成文件树页(static/tree/index.html)
 node (Join-Path $scriptsDir "gen-tree.js") | Out-Null
 
+# 把 Obsidian 图片语法转成 Hugo 支持的形式
+node (Join-Path $scriptsDir "fix-obsidian-links.js") | Out-Null
+
 $buildLog = & $hugo --gc --minify 2>&1
 if ($LASTEXITCODE -ne 0) {
     Write-Err "构建失败,请检查以下输出:"
