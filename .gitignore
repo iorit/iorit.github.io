@@ -2,6 +2,6 @@ public/
 resources/
 .hugo_build.lock
 .obsidian/
-content/posts/*.pdf
-content/posts/test*.md
-content/posts/*/*.pdf
+content/**/*.pdf
+content/**/test*.md
+content/**/*.base

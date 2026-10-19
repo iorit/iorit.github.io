@@ -19,13 +19,13 @@ module:
       target: layouts
     - source: static
       target: static
-    - source: content/posts/image
+    - source: content/文章/image
       target: assets/image
 
 enableRobotsTXT: true
 
 params:
-  mainSections: ["posts", "过往"]
+  mainSections: ["文章", "过往", "随笔"]
   profileMode:
     enabled: false
   homeInfoParams:

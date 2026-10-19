@@ -38,6 +38,13 @@ function walk(dir, rel, out) {
     }
     for (const d of dirs) {
         if (SKIP.has(d.name)) continue;
+        const bundleIndex = path.join(dir, d.name, "index.md");
+        if (fs.existsSync(bundleIndex)) {
+            // 页面包(PKU伙食大测评/index.md):整个文件夹算一篇文章
+            const title = readTitle(bundleIndex);
+            out.push({ type: "file", name: d.name, rel: rel + "/" + d.name, title });
+            continue;
+        }
         const sub = [];
         walk(path.join(dir, d.name), rel + "/" + d.name, sub);
         out.push({ type: "dir", name: d.name, rel: rel + "/" + d.name, children: sub });

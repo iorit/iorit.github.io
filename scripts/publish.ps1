@@ -22,7 +22,7 @@ function Write-Err($msg)  { Write-Host "[错误] $msg" -ForegroundColor Red }
 # ---------- 1. 扫描文章,自动补 front matter ----------
 Write-Info "扫描 content/ 下的文章..."
 
-$postsDir = Join-Path $repoRoot "content\posts"
+$postsDir = Join-Path $repoRoot "content"
 $fixed = 0
 
 Get-ChildItem $postsDir -Recurse -Filter "*.md" -ErrorAction SilentlyContinue | ForEach-Object {
