@@ -4,8 +4,10 @@
 #
 #  功能:
 #    1. 自动为缺少 front matter 的文章补齐头部(标题取文件名,日期取修改时间)
-#    2. 本地构建检查,构建失败会中止
-#    3. git add / commit / push,推送后 GitHub Actions 自动部署
+#    2. 转换 Obsidian 图片语法
+#    3. 图片归位(Obsidian 存错位置的图片搬回文章目录),并阻止裂图发布
+#    4. 本地构建检查,构建失败会中止
+#    5. git add / commit / push,推送后 GitHub Actions 自动部署
 # ============================================================
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
@@ -63,11 +65,19 @@ if (-not (Test-Path $hugo)) {
     exit 1
 }
 
-# 重新生成文件树页(static/tree/index.html)
-node (Join-Path $scriptsDir "gen-tree.js") | Out-Null
-
 # 把 Obsidian 图片语法转成 Hugo 支持的形式
 node (Join-Path $scriptsDir "fix-obsidian-links.js") | Out-Null
+
+# 图片归位:把 Obsidian 存到别处的图片搬回文章目录;带图的单文件文章转成文章文件夹
+# 有图片找不到时会以非 0 退出,这里必须中止,否则会发布出裂图
+node (Join-Path $scriptsDir "fix-post-images.js")
+if ($LASTEXITCODE -ne 0) {
+    Write-Err "图片有问题(见上方列表),已中止,没有提交任何东西。"
+    exit 1
+}
+
+# 重新生成文件树页(static/tree/index.html) —— 必须放在图片归位之后,文章结构可能变了
+node (Join-Path $scriptsDir "gen-tree.js") | Out-Null
 
 $buildLog = & $hugo --gc --minify 2>&1
 if ($LASTEXITCODE -ne 0) {
