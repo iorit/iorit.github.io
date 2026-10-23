@@ -31,7 +31,7 @@ assets/
   wallpaper/              动态壁纸（可选，见下文），可能为空
 layouts/                  仅 4 个文件，覆盖主题默认行为：
   index.html              首页改成「文件夹网格」入口（folder-grid）
-  _markup/render-image.html  图片渲染：按 `{width=NNN}` 出 2 倍图、PNG 转 WebP、超 1600px 兜底缩放
+  _markup/render-image.html  图片渲染：默认 400 显示宽（存 2 倍 800px）、PNG 转 WebP、可用 {width=NNN} 覆盖
   partials/extend_head.html  MathJax 3（CDN）
   partials/extend_footer.html  全站动态壁纸的挂载点
 scripts/
