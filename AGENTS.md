@@ -74,7 +74,7 @@ git add -A; git commit -m "publish: $(Get-Date -Format 'yyyy-MM-dd HH:mm')"; git
 - **配图**：两种放法都行，`fix-post-images.js` 会自动判位。
   - **文章文件夹（推荐，Obsidian 拖图即用）**：`content/随笔/某篇/index.md` 旁边放图，正文写裸文件名 `![](abc.png)`。注意 `.md` 必须是 `index.md`，改名就散架。
   - **共享图库**：`content/文章/image/<主题>/`，正文写 `image/<主题>/<文件名>`，经 `hugo.yaml` 的 mount 映射成 `assets/image`。
-  - **显示尺寸**：正文写 `{width=400}` 时，`render-image.html` 按 2 倍（800px）出图保证高分屏清晰，PNG 自动转 WebP；不写则超过 1600px 才缩。
+  - **显示尺寸**：默认按 **400 显示宽**出图（文件存 2 倍 800px，高分屏不糊），PNG 自动转 WebP；想改某张就在图片下一行写 `{width=720}`（红黑树那篇的 1920px 流程图就是这么处理成 720 的）。不写就看默认。
 - **Obsidian 附件位置**：两个 vault（`content/随笔`、`content/文章`）的 `.obsidian/app.json` 都设了 `"attachmentFolderPath": "./"`，即「存到当前笔记所在文件夹」。这样拖图进 bundle 文章就直接落在文章目录里。改这个设置前先关掉 Obsidian，否则退出时会覆盖回去。
 - **数学公式**：goldmark `passthrough` 已开（`$...$`、`$$...$$`、`\(...\)`、`\[...\]`），前端由 MathJax 渲染。注意正文里大量用 `$1.$`、`$2.2.1.$` 这种编号写法，别随手把 `$` 配对搞坏。
 - **Obsidian 痕迹**：文章目录里的 `.obsidian/`、`*.base`、`*.canvas`、`test*.md` 都是本地残留，`.gitignore` 已忽略，不要提交、也不要当正文处理。`content/文章/test'.md` 是 0 字节空文件。

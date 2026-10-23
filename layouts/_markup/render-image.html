@@ -1,25 +1,24 @@
-{{- /* 图片渲染
-   1) 正文里写 {width=400} 时，按 2 倍宽度出图（400 显示宽 / 800 实际像素），保证高分屏不糊；
-   2) 没写 width 时，超过 1600px 的图仍然缩到 1600px；
-   3) PNG 会转成 WebP（截屏照片用 PNG 体积是浪费），其它格式保持原样。
-   想改回纯 PNG：把下面 $toWebp 改成 false。 */ -}}
+{{- /* 图片渲染规则
+   1) 默认按 400 显示宽出图：文件存 2 倍（800px）保证高分屏不糊，HTML 上写 width=400；
+   2) 想某张图大一点/小一点：在图片下一行写 {width=800} / {width=600}；
+   3) PNG 自动转 WebP（截屏照片用 PNG 体积是浪费），其它格式保持原样；
+   4) 原图本来就更小的不会被放大。
+   想关掉 WebP：把 $toWebp 改成 false。想改默认宽度：改 $defaultWidth。 */ -}}
 {{- $toWebp := true -}}
+{{- $defaultWidth := 400 -}}
 {{- $u := urls.Parse .Destination -}}
 {{- $src := $u.String -}}
+{{- $attrs := .Attributes | default dict -}}
 {{- $w := 0 -}}
-{{- with index (.Attributes | default dict) "width" -}}{{- $w = int . -}}{{- end -}}
+{{- with index $attrs "width" -}}{{- $w = int . -}}{{- end -}}
+{{- if le $w 0 -}}{{- $w = $defaultWidth -}}{{- end -}}
 {{- if not $u.IsAbs -}}
   {{- $path := strings.TrimPrefix "./" $u.Path -}}
   {{- with or (.PageInner.Resources.Get $path) (resources.Get $path) -}}
     {{- $r := . -}}
     {{- if and (eq .MediaType.MainType "image") (ne .MediaType.SubType "svg") (ne .MediaType.SubType "gif") -}}
-      {{- $target := 0 -}}
-      {{- if gt $w 0 -}}
-        {{- $target = mul $w 2 -}}
-      {{- else if gt .Width 1600 -}}
-        {{- $target = 1600 -}}
-      {{- end -}}
-      {{- if and (gt $target 0) (lt $target .Width) -}}
+      {{- $target := mul $w 2 -}}
+      {{- if lt $target .Width -}}
         {{- $fmt := .MediaType.SubType -}}
         {{- if and $toWebp (eq .MediaType.SubType "png") -}}{{- $fmt = "webp" -}}{{- end -}}
         {{- $r = .Resize (printf "%dx %s q82" $target $fmt) -}}
@@ -34,7 +33,10 @@
     {{- end -}}
   {{- end -}}
 {{- end -}}
-{{- $attributes := merge .Attributes (dict "alt" .Text "src" $src "title" (.Title | transform.HTMLEscape) "loading" "lazy") -}}
+{{- if not (index $attrs "width") -}}
+  {{- $attrs = merge $attrs (dict "width" (printf "%d" $w)) -}}
+{{- end -}}
+{{- $attributes := merge $attrs (dict "alt" .Text "src" $src "title" (.Title | transform.HTMLEscape) "loading" "lazy") -}}
 <img
   {{- range $k, $v := $attributes -}}
     {{- if $v -}}
