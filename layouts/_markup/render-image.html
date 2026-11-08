@@ -1,8 +1,9 @@
 {{- /* 图片渲染规则
-   1) 默认按 400 显示宽出图：文件存 2 倍（800px）保证高分屏不糊，HTML 上写 width=400；
+   1) 本地图片默认按 400 显示宽出图：文件存 2 倍（800px）保证高分屏不糊，HTML 上写 width=400；
    2) 想某张图大一点/小一点：在图片下一行写 {width=800} / {width=600}；
    3) PNG 自动转 WebP（截屏照片用 PNG 体积是浪费），其它格式保持原样；
-   4) 原图本来就更小的不会被放大。
+   4) 原图本来就更小的不会被放大；
+   5) 站外图片（http/https 开头）不做处理，也不强加宽度，交给 CSS 的 max-width 兜底。
    想关掉 WebP：把 $toWebp 改成 false。想改默认宽度：改 $defaultWidth。 */ -}}
 {{- $toWebp := true -}}
 {{- $defaultWidth := 400 -}}
@@ -12,9 +13,11 @@
 {{- $w := 0 -}}
 {{- with index $attrs "width" -}}{{- $w = int . -}}{{- end -}}
 {{- if le $w 0 -}}{{- $w = $defaultWidth -}}{{- end -}}
+{{- $local := false -}}
 {{- if not $u.IsAbs -}}
   {{- $path := strings.TrimPrefix "./" $u.Path -}}
   {{- with or (.PageInner.Resources.Get $path) (resources.Get $path) -}}
+    {{- $local = true -}}
     {{- $r := . -}}
     {{- if and (eq .MediaType.MainType "image") (ne .MediaType.SubType "svg") (ne .MediaType.SubType "gif") -}}
       {{- $target := mul $w 2 -}}
@@ -33,7 +36,7 @@
     {{- end -}}
   {{- end -}}
 {{- end -}}
-{{- if not (index $attrs "width") -}}
+{{- if and $local (not (index $attrs "width")) -}}
   {{- $attrs = merge $attrs (dict "width" (printf "%d" $w)) -}}
 {{- end -}}
 {{- $attributes := merge $attrs (dict "alt" .Text "src" $src "title" (.Title | transform.HTMLEscape) "loading" "lazy") -}}
@@ -43,4 +46,4 @@
       {{- printf " %s=%q" $k (printf "%v" $v) | safeHTMLAttr -}}
     {{- end -}}
   {{- end -}}>
-{{- /**/ -}}
+{{- /* */ -}}
