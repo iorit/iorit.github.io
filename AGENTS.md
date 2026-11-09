@@ -29,6 +29,7 @@ content/
 assets/
   css/extended/*.css      PaperMod 的「extended」约定：这里的 CSS 自动打进全站
   wallpaper/              动态壁纸（可选，见下文），可能为空
+  legacy/<文章id>/        从 cnblogs 搬回来的旧文配图；原先热链 luogu / oi-wiki 图床，已全部下载到本地
 layouts/                  仅 4 个文件，覆盖主题默认行为：
   index.html              首页改成「文件夹网格」入口（folder-grid）
   _markup/render-image.html  图片渲染：默认 400 显示宽（存 2 倍 800px）、PNG 转 WebP、可用 {width=NNN} 覆盖
@@ -84,6 +85,7 @@ git add -A; git commit -m "publish: $(Get-Date -Format 'yyyy-MM-dd HH:mm')"; git
 
 - **编码**：所有 `.md`/`.yaml` 都是 UTF-8（无 BOM）。Windows PowerShell 5.1 的 `Get-Content` / `Out-File` 默认不是 UTF-8，会把中文写成乱码 —— 读写一律用 `-Encoding UTF8`，或 `[System.IO.File]::ReadAllText($p, [System.Text.Encoding]::UTF8)`。`scripts/publish.ps1` 开头设置 `[Console]::OutputEncoding = UTF8` 就是为此。
 - **`.ps1` 必须带 UTF-8 BOM**：`publish.cmd` 用 `powershell`（5.1）执行。**没有 BOM 的 .ps1 会被按 GBK 解析，中文注释读乱后直接语法报错**（"缺少右 }"）。改这两个脚本时务必保留 BOM；写完用 `[System.Management.Automation.Language.Parser]::ParseFile()` 验一遍再收工。
+- **代码块**：`hugo.yaml` 的 `markup.highlight` 设了 `noClasses: false`（用 class 输出，主题自带的 chroma 配色才生效）+ `guessSyntax: true`（围栏没写语言时自动猜，老文章全靠这个）。排版在 `assets/css/extended/code-blocks.css`，它覆盖了主题那条 `.md-content pre code { display: grid; word-break: break-all }`——那条会撑开行距、把长行从中间掐断，别删掉这个覆盖。
 - **别改 `themes/PaperMod/`**：样式放 `assets/css/extended/`，布局覆盖放 `layouts/`，这样主题可以整体替换。
 - **`static/tree/index.html` 是生成物**：只改 `scripts/gen-tree.js`，再重新生成，不要手工编辑这个 HTML。
 - **不要提交** `public/`、`resources/`、`.hugo_build.lock`、`.obsidian/`、`content/**/*.pdf`（`.gitignore` 已覆盖）。

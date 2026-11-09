@@ -48,6 +48,11 @@ params:
   defaultTheme: auto
 
 markup:
+  # 代码块：用 class 输出（主题自带 chroma-styles.css 上色），没写语言的围栏自动猜
+  highlight:
+    noClasses: false
+    guessSyntax: true
+    lineNos: false
   goldmark:
     parser:
       attribute:

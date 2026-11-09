@@ -1,0 +1,128 @@
+/* ============================================================
+   代码块外观
+   覆盖 PaperMod 自带的 `.md-content pre code { display: grid; ... }`：
+   那条规则会把行距撑开、并用 word-break: break-all 把长行从中间掐断。
+   颜色由主题的 chroma-styles.css 提供（hugo.yaml 里 noClasses: false），
+   这里只负责排版、圆角、内边距、滚动条和行内代码。
+   ============================================================ */
+
+:root {
+    --code-font: "JetBrains Mono", "Cascadia Code", "Consolas", "SFMono-Regular",
+        "Noto Sans Mono CJK SC", "Sarasa Mono SC", ui-monospace, monospace;
+}
+
+/* ---------- 行内代码 `like this` ---------- */
+.post-content :not(pre) > code,
+.md-content :not(pre) > code {
+    font-family: var(--code-font);
+    font-size: 0.875em;
+    padding: 0.15em 0.4em;
+    border-radius: 5px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    word-break: break-word;
+}
+
+/* ---------- 多行代码块 ---------- */
+.md-content .highlight,
+.md-content pre {
+    margin: 1.4em 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--code-block-bg);
+}
+
+.md-content .highlight pre,
+.md-content pre {
+    margin: 0;
+}
+
+.md-content pre code,
+.md-content .highlight code {
+    display: block;
+    padding: 16px 18px;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent !important;
+    font-family: var(--code-font);
+    font-size: 13.5px;
+    line-height: 1.65;
+    letter-spacing: 0;
+    white-space: pre;
+    word-break: normal;
+    overflow-wrap: normal;
+    tab-size: 4;
+    -moz-tab-size: 4;
+    overflow-x: auto;
+    color: #d6deeb;
+}
+
+/* chroma 把每行包在 .line 里，行高交给 code 统一控制 */
+.md-content .chroma .line,
+.md-content .chroma .cl {
+    display: inline;
+    line-height: inherit;
+}
+
+/* 去掉 chroma 自带底色，让上面的容器负责 */
+.md-content .chroma {
+    background: transparent !important;
+}
+
+/* 滚动条：细、低调，不再用系统默认的粗条 */
+.md-content pre code::-webkit-scrollbar {
+    height: 10px;
+}
+
+.md-content pre code::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.md-content pre code::-webkit-scrollbar-thumb {
+    background: rgba(140, 150, 175, 0.35);
+    border-radius: 6px;
+}
+
+.md-content pre code::-webkit-scrollbar-thumb:hover {
+    background: rgba(140, 150, 175, 0.6);
+}
+
+/* ---------- 注释 / 预处理指令：主题原色 #6e738d 在深色底上几乎看不见，提亮 ---------- */
+.md-content .chroma .c,
+.md-content .chroma .ch,
+.md-content .chroma .cm,
+.md-content .chroma .c1,
+.md-content .chroma .cs,
+.md-content .chroma .cp,
+.md-content .chroma .cpf {
+    color: #93a0b8;
+}
+
+/* 标点/运算符别太抢眼，防止满屏荧光 */
+.md-content .chroma .p,
+.md-content .chroma .o,
+.md-content .chroma .ow {
+    color: #b8c2d8;
+}
+
+/* 鼠标选中代码时的对比度 */
+.md-content pre code ::selection,
+.md-content pre code::selection {
+    background: rgba(120, 170, 255, 0.35);
+}
+
+/* ---------- 浅色模式：代码块保持深色，但描边和阴影更柔和 ---------- */
+:root[data-theme="light"] .md-content pre,
+:root[data-theme="light"] .md-content .highlight {
+    border-color: rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+:root[data-theme="light"] .post-content :not(pre) > code,
+:root[data-theme="light"] .md-content :not(pre) > code {
+    color: #b1266b;
+    background: rgba(0, 0, 0, 0.045);
+    border-color: rgba(0, 0, 0, 0.08);
+}
