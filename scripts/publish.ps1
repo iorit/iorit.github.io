@@ -21,47 +21,80 @@ function Write-Ok($msg)   { Write-Host "[成功] $msg" -ForegroundColor Green }
 function Write-Warn($msg) { Write-Host "[注意] $msg" -ForegroundColor Yellow }
 function Write-Err($msg)  { Write-Host "[错误] $msg" -ForegroundColor Red }
 
-# 推送到 GitHub(自动找代理、失败重试)。成功返回 $true
-function Push-Repo {
-    Write-Info "推送到 GitHub..."
+# 端口探活:连得上返回 $true
+function Test-Tcp([string]$targetHost, [int]$targetPort, [int]$timeoutMs = 2500) {
+    $client = New-Object System.Net.Sockets.TcpClient
+    try {
+        $task = $client.ConnectAsync($targetHost, $targetPort)
+        if (-not $task.Wait($timeoutMs)) { return $false }
+        return $client.Connected
+    } catch {
+        return $false
+    } finally {
+        $client.Dispose()
+    }
+}
 
-    # 收集候选代理:系统代理设置 + 常见本地端口;直连不通时挨个试
-    $sysProxy = $null
-    $proxyReg = Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" -ErrorAction SilentlyContinue
-    if ($proxyReg.ProxyServer) { $sysProxy = "http://" + $proxyReg.ProxyServer }
+# 收集候选代理:系统代理设置 + 常见本地端口
+function Get-ProxyCandidates {
+    $result = @()
+    $reg = Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" -ErrorAction SilentlyContinue
+    $sys = $null
+    if ($reg.ProxyServer) { $sys = "http://" + $reg.ProxyServer }
 
     $listening = @()
     foreach ($port in @(7897, 7890, 10809, 1080, 8080)) {
-        $client = New-Object System.Net.Sockets.TcpClient
-        try {
-            $client.Connect("127.0.0.1", $port)
-            if ($client.Connected) { $listening += "http://127.0.0.1:$port" }
-        } catch { } finally { $client.Dispose() }
+        if (Test-Tcp "127.0.0.1" $port 400) { $listening += "http://127.0.0.1:$port" }
     }
 
-    $proxies = @()
-    if (($proxyReg.ProxyEnable -eq 1) -and $sysProxy) { $proxies += $sysProxy }
-    $proxies += $listening
-    if ($sysProxy) { $proxies += $sysProxy }
-    $proxies = @($proxies | Where-Object { $_ } | Select-Object -Unique)
+    if (($reg.ProxyEnable -eq 1) -and $sys) { $result += $sys }
+    $result += $listening
+    if ($sys) { $result += $sys }
+    return @($result | Where-Object { $_ } | Select-Object -Unique)
+}
 
-    $tries = @(@{ name = "直连"; arg = @() })
-    foreach ($p in $proxies) {
-        $tries += @{ name = $p; arg = @("-c", "http.proxy=$p", "-c", "https.proxy=$p") }
-    }
+# 推送到 GitHub。推不上去就每 10 秒自动重试,直到成功(Ctrl+C 可中止)
+function Push-Repo {
+    Write-Info "推送到 GitHub..."
+    $round = 0
 
-    foreach ($t in $tries) {
-        for ($i = 1; $i -le 2; $i++) {
-            Write-Info "尝试推送($($t.name))..."
-            $pushLog = & git @($t.arg) push 2>&1
-            if ($LASTEXITCODE -eq 0) { Write-Ok "推送成功($($t.name))"; return $true }
-            if ($i -lt 2) { Start-Sleep -Seconds 4 }
+    while ($true) {
+        $round++
+        $proxies = Get-ProxyCandidates
+        $directOk = Test-Tcp "github.com" 443 2500
+
+        # 既不能直连、也没有本地代理:不硬撞,等用户把代理开起来
+        if (-not $directOk -and $proxies.Count -eq 0) {
+            Write-Warn "第 $round 轮:直连 github.com 不通,也没发现本地代理。10 秒后重试(开好代理会自动继续,Ctrl+C 中止)"
+            Start-Sleep -Seconds 10
+            continue
         }
-    }
 
-    Write-Err "所有方式都推不上去。请确认代理软件已开启,输出如下:"
-    $pushLog | ForEach-Object { Write-Host $_ }
-    return $false
+        $tries = @()
+        if ($directOk) { $tries += @{ name = "直连"; arg = @() } }
+        foreach ($p in $proxies) {
+            $tries += @{ name = $p; arg = @("-c", "http.proxy=$p", "-c", "https.proxy=$p") }
+        }
+
+        foreach ($t in $tries) {
+            Write-Info "第 $round 轮,尝试推送($($t.name))..."
+            $pushLog = & git @($t.arg) push 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Write-Ok "推送成功($($t.name))"
+                return $true
+            }
+            # 认证/权限类错误重试也没用,直接报错退出
+            $joined = ($pushLog | Out-String)
+            if ($joined -match "Authentication failed|Permission denied|could not read Username|Repository not found") {
+                Write-Err "推送被拒绝(认证或权限问题),重试没有意义:"
+                $pushLog | ForEach-Object { Write-Host $_ }
+                return $false
+            }
+        }
+
+        Write-Warn "第 $round 轮推送失败,10 秒后自动重试(Ctrl+C 中止)"
+        Start-Sleep -Seconds 10
+    }
 }
 
 # ---------- 1. 扫描文章,自动补 front matter ----------

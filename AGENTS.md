@@ -56,7 +56,7 @@ public/ resources/        构建产物，已被 .gitignore 忽略
 3. `node scripts/fix-post-images.js` —— **图片归位**：把 Obsidian 存到别处的图片按文件名找回并搬进文章文件夹；带图的单文件 md 自动转成文章文件夹（`x.md` → `x/index.md`，URL 不变）；**找不到任何图片就以非 0 退出，publish 中止**，绝不会发布裂图；
 4. `node scripts/gen-tree.js` —— 重新生成 `static/tree/index.html`（**它已被 git 跟踪，忘了跑就会留下过期 diff**；必须在第 3 步之后，结构可能变了）；
 5. `hugo --gc --minify` 本地构建，**构建失败就中止，不提交**；
-6. `git add -A` → `git commit -m "publish: YYYY-MM-DD HH:mm"` → `git push`（脚本会自动读 Windows 系统代理，重试 3 次）。
+6. `git add -A` → `git commit -m "publish: YYYY-MM-DD HH:mm"` → `git push`（自动探测系统代理和 7897/7890/10809/1080/8080 等本地端口；直连和代理都推不上去时**每 10 秒自动重试，直到成功**，Ctrl+C 中止；认证/权限类错误直接失败，不空转）。另外：如果只有"上次没推成功的旧提交"、没有新改动，脚本也会补推，不会干等着。
 
 在 DSH 里发布时按同样的顺序手动执行即可。提交信息沿用 `publish: <时间>` 的格式，历史全是这个风格。
 
