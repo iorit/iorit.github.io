@@ -33,7 +33,7 @@ params:
   # 备用 giscus：Twikoo 没配时才启用，需要 categoryId
   comments: true
   twikoo:
-    envId: ""
+    envId: "https://wonderful-daifuku-6bc36b.netlify.app/.netlify/functions/twikoo"
     lang: zh-CN
     # 国内建议 npmmirror；换 CDN 时记得同步版本号
     js: "https://registry.npmmirror.com/twikoo/2.0.17/files/dist/twikoo.min.js"
