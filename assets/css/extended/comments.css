@@ -66,6 +66,20 @@ body:has(#bg-wallpaper) .comments-section {
     color: var(--secondary);
 }
 
+/* ---------- 只留「昵称 + 内容」：隐藏邮箱和网址输入框 ----------
+   Twikoo 没有删字段的配置项，只能按位置隐藏：
+   .tk-meta-input 下依次是 昵称 / 邮箱 / 网址 三个 .tk-meta-input__item */
+#twikoo .tk-meta-input .tk-meta-input__item:nth-child(2),
+#twikoo .tk-meta-input .tk-meta-input__item:nth-child(3) {
+    display: none !important;
+}
+
+/* 昵称框撑满整行，不要留半截空位 */
+#twikoo .tk-meta-input .tk-meta-input__item:first-child {
+    flex: 1 1 100%;
+    width: 100%;
+}
+
 .giscus-frame {
     width: 100%;
     border: none;
