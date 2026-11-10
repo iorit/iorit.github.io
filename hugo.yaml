@@ -61,7 +61,7 @@ params:
     - name: bilibili
       url: "https://space.bilibili.com/474634110"
   ShowReadingTime: true
-  ShowShareButtons: true
+  ShowShareButtons: false
   ShowPostNavLinks: true
   ShowBreadCrumbs: true
   ShowCodeCopyButtons: true

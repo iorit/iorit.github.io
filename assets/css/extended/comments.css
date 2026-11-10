@@ -80,6 +80,12 @@ body:has(#bg-wallpaper) .comments-section {
     width: 100%;
 }
 
+/* 去掉评论框里的「M↓」（markdown 帮助）和「预览」按钮 */
+#twikoo .tk-submit-action-icon.__markdown,
+#twikoo .tk-button.tk-preview {
+    display: none !important;
+}
+
 .giscus-frame {
     width: 100%;
     border: none;

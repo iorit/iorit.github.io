@@ -97,4 +97,6 @@ git add -A; git commit -m "publish: $(Get-Date -Format 'yyyy-MM-dd HH:mm')"; git
 - 构建必须干净通过：`hugo --gc --minify`（CI 用 production 环境，`HUGO_VERSION: 0.165.0`）。
 - 本地看效果：`hugo server -D`，默认 <http://localhost:1313/>。
 - 上线判断：push 到 `main` 后 Actions 约 1~2 分钟部署，地址 <https://iorit.github.io/>。
+- **线上没更新时**：先看 <https://github.com/iorit/iorit.github.io/actions> 最近一次 `Deploy Hugo site to Pages` 是红是绿。若是红的（偶发失败，日志里常见 `build` 步骤挂掉、导致 deploy 报 "No artifacts named github-pages"），推一个空提交触发重跑即可：`git commit --allow-empty -m "publish: 重试部署"` 然后 push。仓库里的 `pages build and deployment` 那是 GitHub 自带的另一条流水线，它失败不代表部署失败，别看错。
+- 评论区（Twikoo）的后端在 Netlify + MongoDB Atlas，前端配置见 `hugo.yaml` 的 `params.twikoo`；评论数据在 Atlas 里，`envId` 一换就整体切到另一个后端。
 - 首页是文件夹网格（`.folder-grid`），改首页结构时同时确认 `layouts/index.html` 与 `assets/css/extended/folder-grid.css`。
