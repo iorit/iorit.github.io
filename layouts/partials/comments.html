@@ -13,7 +13,6 @@
 <section class="comments-section" id="comments">
   <h2 class="comments-title">评论</h2>
   {{- if $showTwikoo -}}
-  <div class="comments-hint">填个昵称就能发，不需要注册账号。（首次评论我会人工过一眼）</div>
   <div id="twikoo" class="twikoo-wrap"></div>
   <script src="{{ index $tw "js" | default "https://registry.npmmirror.com/twikoo/2.0.17/files/dist/twikoo.min.js" }}"></script>
   <script>
