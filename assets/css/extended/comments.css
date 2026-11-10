@@ -1,0 +1,50 @@
+/* ============================================================
+   评论区（giscus）
+   只在有评论组件的时候出现；壁纸模式下给个半透明底，避免和背景糊在一起
+   ============================================================ */
+
+.comments-section {
+    margin: 48px 0 8px;
+    padding-top: 26px;
+    border-top: 1px solid var(--border);
+}
+
+.comments-title {
+    margin: 0 0 10px;
+    font-size: 1.35em;
+    color: var(--primary);
+}
+
+.comments-hint {
+    margin-bottom: 18px;
+    font-size: 0.85em;
+    color: var(--secondary);
+}
+
+.comments-hint a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.giscus-wrap {
+    min-height: 120px;
+}
+
+/* 有壁纸时给评论区加一层毛玻璃，否则文字容易和背景糊在一起 */
+body:has(#bg-wallpaper) .comments-section {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 10px;
+    padding: 22px 20px 20px;
+}
+
+:root[data-theme="dark"] body:has(#bg-wallpaper) .comments-section {
+    background: rgba(46, 46, 51, 0.85);
+}
+
+/* giscus 的 iframe 在深色下别留白边 */
+.giscus-frame {
+    width: 100%;
+    border: none;
+}

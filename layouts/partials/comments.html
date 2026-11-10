@@ -1,0 +1,51 @@
+{{- /* 评论区：giscus(基于 GitHub Discussions)
+   配置在 hugo.yaml 的 params.giscus。categoryId 没填时整块不渲染，不会出现空框。
+   只在 mainSections 里的文章页显示。 */ -}}
+{{- $g := site.Params.giscus | default dict -}}
+{{- $repo := index $g "repo" | default "" -}}
+{{- $repoId := index $g "repoId" | default "" -}}
+{{- $cat := index $g "category" | default "" -}}
+{{- $catId := index $g "categoryId" | default "" -}}
+{{- $enabled := and $repo $repoId $catId (in site.Params.mainSections .Type) -}}
+{{- if $enabled -}}
+<section class="comments-section" id="comments">
+  <h2 class="comments-title">评论</h2>
+  <div class="comments-hint">用 GitHub 账号登录即可发言，评论会同步到<a href="https://github.com/{{ $repo }}/discussions" target="_blank" rel="noopener">仓库的 Discussions</a>。</div>
+  <div class="giscus-wrap">
+    <script src="https://giscus.app/client.js"
+      data-repo="{{ $repo }}"
+      data-repo-id="{{ $repoId }}"
+      data-category="{{ $cat }}"
+      data-category-id="{{ $catId }}"
+      data-mapping="{{ index $g "mapping" | default "pathname" }}"
+      data-strict="{{ index $g "strict" | default 0 }}"
+      data-reactions-enabled="{{ index $g "reactionsEnabled" | default 1 }}"
+      data-emit-metadata="0"
+      data-input-position="{{ index $g "inputPosition" | default "top" }}"
+      data-theme="preferred_color_scheme"
+      data-lang="{{ index $g "lang" | default "zh-CN" }}"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+</section>
+<script>
+  // 站点主题切换后同步 giscus 的主题
+  (function () {
+    function syncGiscusTheme() {
+      var frame = document.querySelector('iframe.giscus-frame');
+      if (!frame) return;
+      var t = document.documentElement.getAttribute('data-theme');
+      var theme = t === 'dark' ? 'dark' : t === 'light' ? 'light' : 'preferred_color_scheme';
+      frame.contentWindow.postMessage({ giscus: { setConfig: { theme: theme } } }, 'https://giscus.app');
+    }
+    document.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('#theme-toggle')) setTimeout(syncGiscusTheme, 120);
+    });
+    window.addEventListener('message', function (e) {
+      if (e.origin === 'https://giscus.app' && e.data && e.data.giscus) syncGiscusTheme();
+    });
+  })();
+</script>
+{{- end -}}

@@ -26,6 +26,21 @@ enableRobotsTXT: true
 
 params:
   mainSections: ["文章", "过往", "随笔"]
+
+  # 评论区（giscus，基于 GitHub Discussions）
+  # 填好 categoryId 之后才会显示；category/categoryId 需与仓库 Discussions 里的分类一致
+  comments: true
+  giscus:
+    repo: iorit/iorit.github.io
+    repoId: R_kgDOULiVXg
+    category: ""
+    categoryId: ""
+    mapping: pathname
+    strict: 0
+    reactionsEnabled: 1
+    inputPosition: top
+    lang: zh-CN
+
   profileMode:
     enabled: false
   homeInfoParams:
