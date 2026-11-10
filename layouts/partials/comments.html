@@ -1,22 +1,37 @@
-{{- /* 评论区：giscus(基于 GitHub Discussions)
-   配置在 hugo.yaml 的 params.giscus。categoryId 没填时整块不渲染，不会出现空框。
-   只在 mainSections 里的文章页显示。 */ -}}
+{{- /* 评论区
+   优先用 Twikoo（params.twikoo.envId 填了才启用，读者免登录）；
+   没配 Twikoo 时退回 giscus（params.giscus.categoryId 填了才启用）。
+   两者都只出现在 mainSections 的文章页；单篇文章想关掉就写 comments: false
+   或 twikoo: false。 */ -}}
+{{- $tw := site.Params.twikoo | default dict -}}
+{{- $envId := index $tw "envId" | default "" -}}
 {{- $g := site.Params.giscus | default dict -}}
-{{- $repo := index $g "repo" | default "" -}}
-{{- $repoId := index $g "repoId" | default "" -}}
-{{- $cat := index $g "category" | default "" -}}
-{{- $catId := index $g "categoryId" | default "" -}}
-{{- $enabled := and $repo $repoId $catId (in site.Params.mainSections .Type) -}}
-{{- if $enabled -}}
+{{- $giscusReady := and (index $g "repo") (index $g "repoId") (index $g "categoryId") -}}
+{{- $showTwikoo := and $envId (.Param "twikoo") -}}
+{{- $showGiscus := and (not $showTwikoo) $giscusReady (.Param "twikoo") -}}
+{{- if and (in site.Params.mainSections .Type) (or $showTwikoo $showGiscus) -}}
 <section class="comments-section" id="comments">
   <h2 class="comments-title">评论</h2>
-  <div class="comments-hint">用 GitHub 账号登录即可发言，评论会同步到<a href="https://github.com/{{ $repo }}/discussions" target="_blank" rel="noopener">仓库的 Discussions</a>。</div>
-  <div class="giscus-wrap">
+  {{- if $showTwikoo -}}
+  <div class="comments-hint">填个昵称就能发，不需要注册账号。（首次评论我会人工过一眼）</div>
+  <div id="twikoo" class="twikoo-wrap"></div>
+  <script src="{{ index $tw "js" | default "https://registry.npmmirror.com/twikoo/2.0.17/files/dist/twikoo.min.js" }}"></script>
+  <script>
+    twikoo.init({
+      envId: {{ $envId | jsonify | safeJS }},
+      el: "#twikoo",
+      path: window.location.pathname,
+      lang: {{ index $tw "lang" | default "zh-CN" | jsonify | safeJS }}
+    });
+  </script>
+  {{- else -}}
+  <div class="comments-hint">用 GitHub 账号登录即可发言。</div>
+  <div class="comments-widget">
     <script src="https://giscus.app/client.js"
-      data-repo="{{ $repo }}"
-      data-repo-id="{{ $repoId }}"
-      data-category="{{ $cat }}"
-      data-category-id="{{ $catId }}"
+      data-repo="{{ index $g "repo" }}"
+      data-repo-id="{{ index $g "repoId" }}"
+      data-category="{{ index $g "category" }}"
+      data-category-id="{{ index $g "categoryId" }}"
       data-mapping="{{ index $g "mapping" | default "pathname" }}"
       data-strict="{{ index $g "strict" | default 0 }}"
       data-reactions-enabled="{{ index $g "reactionsEnabled" | default 1 }}"
@@ -29,23 +44,6 @@
       async>
     </script>
   </div>
+  {{- end -}}
 </section>
-<script>
-  // 站点主题切换后同步 giscus 的主题
-  (function () {
-    function syncGiscusTheme() {
-      var frame = document.querySelector('iframe.giscus-frame');
-      if (!frame) return;
-      var t = document.documentElement.getAttribute('data-theme');
-      var theme = t === 'dark' ? 'dark' : t === 'light' ? 'light' : 'preferred_color_scheme';
-      frame.contentWindow.postMessage({ giscus: { setConfig: { theme: theme } } }, 'https://giscus.app');
-    }
-    document.addEventListener('click', function (e) {
-      if (e.target.closest && e.target.closest('#theme-toggle')) setTimeout(syncGiscusTheme, 120);
-    });
-    window.addEventListener('message', function (e) {
-      if (e.origin === 'https://giscus.app' && e.data && e.data.giscus) syncGiscusTheme();
-    });
-  })();
-</script>
 {{- end -}}

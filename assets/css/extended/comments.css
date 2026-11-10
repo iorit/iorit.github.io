@@ -1,6 +1,7 @@
 /* ============================================================
-   评论区（giscus）
-   只在有评论组件的时候出现；壁纸模式下给个半透明底，避免和背景糊在一起
+   评论区（Twikoo 为主，giscus 备用）
+   Twikoo 是直接渲染在本页里的（不是 iframe），所以颜色基本继承站点样式，
+   这里只做间距、圆角和深色模式下输入框的对比度修正。
    ============================================================ */
 
 .comments-section {
@@ -26,7 +27,8 @@
     text-underline-offset: 2px;
 }
 
-.giscus-wrap {
+.twikoo-wrap,
+.comments-widget {
     min-height: 120px;
 }
 
@@ -43,7 +45,27 @@ body:has(#bg-wallpaper) .comments-section {
     background: rgba(46, 46, 51, 0.85);
 }
 
-/* giscus 的 iframe 在深色下别留白边 */
+/* ---------- Twikoo 深色模式修正 ---------- */
+#twikoo {
+    font-family: inherit;
+}
+
+:root[data-theme="dark"] #twikoo input,
+:root[data-theme="dark"] #twikoo textarea {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.16);
+}
+
+:root[data-theme="dark"] #twikoo input::placeholder,
+:root[data-theme="dark"] #twikoo textarea::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+#twikoo a {
+    color: var(--secondary);
+}
+
 .giscus-frame {
     width: 100%;
     border: none;

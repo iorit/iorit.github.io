@@ -27,9 +27,16 @@ enableRobotsTXT: true
 params:
   mainSections: ["文章", "过往", "随笔"]
 
-  # 评论区（giscus，基于 GitHub Discussions）
-  # 填好 categoryId 之后才会显示；category/categoryId 需与仓库 Discussions 里的分类一致
+  # 评论区
+  # 主用 Twikoo：填 envId 后启用（读者免登录，填个昵称就能发）
+  #   envId 形如：https://你的站点名.netlify.app/.netlify/functions/twikoo
+  # 备用 giscus：Twikoo 没配时才启用，需要 categoryId
   comments: true
+  twikoo:
+    envId: ""
+    lang: zh-CN
+    # 国内建议 npmmirror；换 CDN 时记得同步版本号
+    js: "https://registry.npmmirror.com/twikoo/2.0.17/files/dist/twikoo.min.js"
   giscus:
     repo: iorit/iorit.github.io
     repoId: R_kgDOULiVXg
