@@ -86,6 +86,11 @@ body:has(#bg-wallpaper) .comments-section {
     display: none !important;
 }
 
+/* 去掉每条评论下方的「Windows 11 / Chrome xxx」这类 UA 标识 */
+#twikoo .tk-extras {
+    display: none !important;
+}
+
 .giscus-frame {
     width: 100%;
     border: none;
