@@ -173,16 +173,27 @@ for (let mdPath of mds) {
         const bare = !ref.includes("/");
 
         // 裸文件名：必须落在文章文件夹里
+        // 注意：单文件 md 的"同目录图片"Hugo 是解析不了的（只有 bundle 里的才算页面资源），
+        // 所以只要出现裸文件名引用，单文件文章就要转成文章文件夹，图片跟着搬进去。
         if (bare) {
-            let d = dir;
-            if (!fs.existsSync(path.join(d, ref))) {
-                if (path.basename(mdPath) !== "index.md") {
-                    mdPath = toBundle(mdPath);
-                    d = path.dirname(mdPath);
+            const name = path.basename(ref);
+            const sibling = path.join(dir, name);
+
+            if (path.basename(mdPath) !== "index.md") {
+                mdPath = toBundle(mdPath);
+                const d = path.dirname(mdPath);
+                const dest = path.join(d, name);
+                if (fs.existsSync(sibling) && !fs.existsSync(dest)) {
+                    fs.renameSync(sibling, dest);
+                    actions.push(`移动图片: ${rel(sibling)} -> ${rel(dest)}`);
+                } else if (!fs.existsSync(dest) && !moveInto(d, name)) {
+                    problems.push(`找不到图片: ${ref}（来自 ${rel(mdPath)}）`);
                 }
+                continue;
             }
-            if (fs.existsSync(path.join(d, ref))) continue;
-            if (!moveInto(d, path.basename(ref))) {
+
+            if (fs.existsSync(sibling)) continue;
+            if (!moveInto(dir, name)) {
                 problems.push(`找不到图片: ${ref}（来自 ${rel(mdPath)}）`);
             }
             continue;
