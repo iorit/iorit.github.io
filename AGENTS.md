@@ -30,9 +30,11 @@ assets/
   css/extended/*.css      PaperMod 的「extended」约定：这里的 CSS 自动打进全站
   wallpaper/              动态壁纸（可选，见下文），可能为空
   legacy/<文章id>/        从 cnblogs 搬回来的旧文配图；原先热链 luogu / oi-wiki 图床，已全部下载到本地
-layouts/                  仅 4 个文件，覆盖主题默认行为：
+layouts/                  覆盖主题默认行为的几个文件（改样式优先放 assets/css/extended/）：
   index.html              首页改成「文件夹网格」入口（folder-grid）
+  list.html               列表页：把主题的「上一页/下一页」换成数字页码（样式在 assets/css/extended/pagination.css）
   _markup/render-image.html  图片渲染：默认 400 显示宽（存 2 倍 800px）、PNG 转 WebP、可用 {width=NNN} 覆盖
+  partials/comments.html  评论区（Twikoo，配置见 hugo.yaml 的 params.twikoo）
   partials/extend_head.html  MathJax 3（CDN）
   partials/extend_footer.html  全站动态壁纸的挂载点
 scripts/

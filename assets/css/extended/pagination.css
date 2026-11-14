@@ -1,0 +1,102 @@
+/* ============================================================
+   分页：数字页码（覆盖主题默认的「上一页 / 下一页」纯文字）
+   ============================================================ */
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+/* 数字按钮 */
+.pagination .page-num,
+.pagination .page-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--entry);
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.pagination .page-num:hover,
+.pagination .page-arrow:hover {
+    border-color: var(--secondary);
+    transform: translateY(-1px);
+}
+
+/* 当前页 */
+.pagination .page-num.current {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--theme);
+    cursor: default;
+}
+
+/* 上一页/下一页箭头：不可用时变灰 */
+.pagination .page-arrow {
+    font-size: 18px;
+    line-height: 0;
+    padding-bottom: 3px;
+}
+
+/* 主题给 .next 加了 margin-inline-start:auto 会把它顶到最右边，覆盖掉 */
+.pagination .page-arrow.next {
+    margin-inline-start: 0;
+}
+
+.pagination .page-arrow.disabled {
+    opacity: 0.35;
+    cursor: default;
+    transform: none;
+}
+
+/* 省略号 */
+.pagination .page-dots {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 34px;
+    color: var(--secondary);
+    user-select: none;
+}
+
+/* 有壁纸时给分页条一点毛玻璃底，避免数字糊在背景上 */
+body:has(#bg-wallpaper) .pagination .page-num,
+body:has(#bg-wallpaper) .pagination .page-arrow {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+:root[data-theme="dark"] body:has(#bg-wallpaper) .pagination .page-num,
+:root[data-theme="dark"] body:has(#bg-wallpaper) .pagination .page-arrow {
+    background: rgba(46, 46, 51, 0.8);
+}
+
+:root[data-theme="dark"] body:has(#bg-wallpaper) .pagination .page-num.current {
+    background: var(--primary);
+}
+
+/* 小屏收紧 */
+@media screen and (max-width: 640px) {
+    .pagination .page-num,
+    .pagination .page-arrow {
+        min-width: 30px;
+        height: 30px;
+        padding: 0 7px;
+        font-size: 13px;
+    }
+}
