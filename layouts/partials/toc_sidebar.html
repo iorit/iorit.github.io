@@ -1,0 +1,19 @@
+{{- /* ============================================================
+     文章左侧悬浮目录（宽屏 ≥1400px 显示）
+     - 只有 params.mainSections 里的三个分区（文章/过往/随笔）的单页才渲染
+     - 文章没有任何标题时，整块不输出（服务端判断，不靠 CSS 隐藏）
+     - 窄屏完全不出现，继续使用主题自带的顶部折叠目录
+     样式：assets/css/extended/toc.css
+     脚本：assets/js/toc-sidebar.js
+     ============================================================ */ -}}
+{{- $sections := site.Params.mainSections | default (slice "posts") -}}
+{{- if and .IsPage (in $sections .Section) -}}
+{{- with .Fragments.Headings -}}
+<nav class="toc-sidebar" aria-label="文章目录">
+    <p class="toc-sidebar__title">目录</p>
+    {{- partial "toc_sidebar_tree.html" (dict "headings" . "depth" 1) }}
+</nav>
+{{- $js := resources.Get "js/toc-sidebar.js" | minify | fingerprint -}}
+<script defer src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" crossorigin="anonymous"></script>
+{{- end -}}
+{{- end -}}

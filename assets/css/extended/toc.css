@@ -1,0 +1,168 @@
+/* ============================================================
+   文章左侧悬浮目录
+   - 结构：layouts/partials/toc_sidebar.html
+   - ≥1400px 显示（此时隐藏顶部折叠目录，避免两份重复）
+   - 窄屏整个块不显示，继续用主题自带的顶部折叠目录
+   - 站点有动态壁纸，因此用半透明底 + 毛玻璃保证可读性
+   ============================================================ */
+
+.toc-sidebar {
+    display: none;
+}
+
+@media screen and (min-width: 1400px) {
+    /* 宽屏隐藏主题的顶部折叠目录（仅当左侧目录确实存在时） */
+    body:has(.toc-sidebar) details.toc {
+        display: none;
+    }
+
+    .toc-sidebar {
+        --toc-w: 228px;
+        --toc-inset: 32px;
+        --toc-top: calc(var(--header-height) + 28px);
+
+        display: block;
+        position: fixed;
+        top: var(--toc-top);
+        /* 正文左边缘 = (100% - --main-width) / 2，贴在正文左边外侧 */
+        left: max(20px, calc((100% - var(--main-width)) / 2 - var(--toc-inset) - var(--toc-w)));
+        width: var(--toc-w);
+        max-height: calc(100vh - var(--toc-top) - 24px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 12px 10px 10px;
+        box-sizing: border-box;
+        z-index: 2;
+
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.72);
+        -webkit-backdrop-filter: blur(14px) saturate(150%);
+        backdrop-filter: blur(14px) saturate(150%);
+        box-shadow: 0 8px 26px rgba(0, 0, 0, 0.08);
+
+        font-size: 13.5px;
+        line-height: 1.45;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+    }
+
+    .toc-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.22);
+        border-radius: 3px;
+    }
+
+    .toc-sidebar__title {
+        margin: 0 0 8px;
+        padding: 0 8px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        color: rgba(60, 60, 60, 0.6);
+    }
+
+    .toc-sidebar__list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    /* 层级缩进 + 细分隔线，让 h1→h2→h3 的层次看得出来 */
+    .toc-sidebar__list .toc-sidebar__list {
+        margin-left: 7px;
+        padding-left: 9px;
+        border-left: 1px solid rgba(0, 0, 0, 0.09);
+    }
+
+    .toc-sidebar__item {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .toc-sidebar__link {
+        display: block;
+        margin: 1px 0;
+        padding: 4px 8px;
+        border-radius: 5px;
+        color: rgba(35, 35, 35, 0.78);
+        text-decoration: none;
+        overflow-wrap: break-word;
+        transition: color 0.12s ease, background-color 0.12s ease;
+    }
+
+    .toc-sidebar__link:hover {
+        color: #111;
+        background: rgba(0, 0, 0, 0.05);
+        text-decoration: none;
+    }
+
+    /* 当前所在小节 */
+    .toc-sidebar__link.is-active {
+        color: #111;
+        font-weight: 500;
+        background: rgba(0, 0, 0, 0.07);
+        box-shadow: inset 2px 0 0 rgba(0, 0, 0, 0.45);
+    }
+
+    .toc-sidebar__link[data-level="1"] {
+        font-size: 13.5px;
+        font-weight: 600;
+    }
+
+    .toc-sidebar__link[data-level="2"] {
+        font-size: 13.5px;
+    }
+
+    .toc-sidebar__link[data-level="3"],
+    .toc-sidebar__link[data-level="4"],
+    .toc-sidebar__link[data-level="5"],
+    .toc-sidebar__link[data-level="6"] {
+        font-size: 12.5px;
+    }
+
+    /* ---------- 深色主题 ---------- */
+    :root[data-theme="dark"] .toc-sidebar {
+        background: rgba(29, 30, 32, 0.68);
+        border-color: rgba(255, 255, 255, 0.09);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.42);
+        scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+    }
+
+    :root[data-theme="dark"] .toc-sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.26);
+    }
+
+    :root[data-theme="dark"] .toc-sidebar__title {
+        color: rgba(235, 235, 240, 0.6);
+    }
+
+    :root[data-theme="dark"] .toc-sidebar__list .toc-sidebar__list {
+        border-left-color: rgba(255, 255, 255, 0.12);
+    }
+
+    :root[data-theme="dark"] .toc-sidebar__link {
+        color: rgba(232, 232, 238, 0.75);
+    }
+
+    :root[data-theme="dark"] .toc-sidebar__link:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.09);
+    }
+
+    :root[data-theme="dark"] .toc-sidebar__link.is-active {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.14);
+        box-shadow: inset 2px 0 0 rgba(255, 255, 255, 0.75);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .toc-sidebar__link {
+        transition: none;
+    }
+}

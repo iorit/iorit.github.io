@@ -1,0 +1,14 @@
+{{- /* 递归渲染 .Fragments.Headings；Hugo 的标题层级已经嵌套好，直接按树输出 */ -}}
+{{- $depth := .depth -}}
+<ul class="toc-sidebar__list">
+    {{- range .headings }}
+    <li class="toc-sidebar__item">
+        <a class="toc-sidebar__link" data-level="{{ .Level }}" href="#{{ .ID }}">{{ .Title }}</a>
+        {{- with .Headings }}
+        {{- if lt $depth 4 }}
+        {{- partial "toc_sidebar_tree.html" (dict "headings" . "depth" (add $depth 1)) }}
+        {{- end }}
+        {{- end }}
+    </li>
+    {{- end }}
+</ul>
