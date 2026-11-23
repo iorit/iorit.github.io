@@ -1,12 +1,13 @@
 /* ============================================================
-   文章左侧悬浮目录
+   文章左侧目录（文档站式纯文字大纲）
    - 结构：layouts/partials/toc_sidebar.html
-   - ≥1400px 显示（此时隐藏顶部折叠目录，避免两份重复）
-   - 窄屏整个块不显示，继续用主题自带的顶部折叠目录
-   - 站点有动态壁纸，因此用半透明底 + 毛玻璃保证可读性
+   - 挂载：layouts/single.html（正文 .post-content 内，sticky 才能与正文顶部对齐）
+   - 脚本：assets/js/toc-sidebar.js
+   - ≥1400px 显示；窄屏整个块不显示，继续用主题自带的顶部折叠目录
+   - 无背景 / 无边框 / 无圆角卡片：左侧 1px 轨道 + 当前小节 2px 高亮条
    ============================================================ */
 
-.toc-sidebar {
+.toc-sidebar-wrap {
     display: none;
 }
 
@@ -16,153 +17,151 @@
         display: none;
     }
 
-    .toc-sidebar {
-        --toc-w: 228px;
-        --toc-inset: 32px;
-        --toc-top: calc(var(--header-height) + 28px);
+    /* sticky 需要一块与正文等高的定位容器 */
+    .post-content {
+        position: relative;
+    }
+
+    .toc-sidebar-wrap {
+        --toc-w: 236px;
+        --toc-gap: 48px;
+        --toc-pad: 16px;
 
         display: block;
-        position: fixed;
-        top: var(--toc-top);
-        /* 正文左边缘 = (100% - --main-width) / 2，贴在正文左边外侧 */
-        left: max(20px, calc((100% - var(--main-width)) / 2 - var(--toc-inset) - var(--toc-w)));
+        position: absolute;
+        top: 0;
+        left: calc(0px - var(--toc-w) - var(--toc-gap));
         width: var(--toc-w);
-        max-height: calc(100vh - var(--toc-top) - 24px);
+        height: 100%;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .toc-sidebar {
+        position: sticky;
+        top: 28px;
+        max-height: calc(100vh - 56px);
         overflow-y: auto;
         overscroll-behavior: contain;
-        padding: 12px 10px 10px;
-        box-sizing: border-box;
-        z-index: 2;
-
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        background: rgba(255, 255, 255, 0.72);
-        -webkit-backdrop-filter: blur(14px) saturate(150%);
-        backdrop-filter: blur(14px) saturate(150%);
-        box-shadow: 0 8px 26px rgba(0, 0, 0, 0.08);
-
-        font-size: 13.5px;
-        line-height: 1.45;
+        pointer-events: auto;
         scrollbar-width: thin;
-        scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+        scrollbar-color: rgba(0, 0, 0, 0.16) transparent;
+
+        font-size: 13px;
+        line-height: 1.55;
+        /* 壁纸上没有背景块，靠轻微投影保证可读（与 wallpaper.css 的正文一致） */
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.16);
     }
 
     .toc-sidebar::-webkit-scrollbar {
-        width: 6px;
+        width: 4px;
     }
 
     .toc-sidebar::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.22);
-        border-radius: 3px;
+        background: rgba(0, 0, 0, 0.16);
+        border-radius: 2px;
     }
 
     .toc-sidebar__title {
-        margin: 0 0 8px;
-        padding: 0 8px;
+        margin: 0 0 10px;
+        padding-inline-start: calc(var(--toc-pad) + 1px);
         font-size: 12px;
         font-weight: 600;
+        line-height: 1.6;
         letter-spacing: 0.08em;
-        color: rgba(60, 60, 60, 0.6);
+        color: var(--secondary);
     }
 
-    .toc-sidebar__list {
+    .toc-sidebar .toc-sidebar__list {
+        margin: 0;
+        padding: 4px 0 4px var(--toc-pad);
+        border-inline-start: 1px solid var(--border);
+        list-style: none;
+    }
+
+    .toc-sidebar .toc-sidebar__item {
+        position: relative;
         margin: 0;
         padding: 0;
         list-style: none;
     }
 
-    /* 层级缩进 + 细分隔线，让 h1→h2→h3 的层次看得出来 */
-    .toc-sidebar__list .toc-sidebar__list {
-        margin-left: 7px;
-        padding-left: 9px;
-        border-left: 1px solid rgba(0, 0, 0, 0.09);
+    /* 轨道上的当前小节高亮条 */
+    .toc-sidebar .toc-sidebar__item::before {
+        content: "";
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        left: calc(-1 * var(--toc-pad) - 1px);
+        width: 2px;
+        border-radius: 1px;
+        background: transparent;
+        transition: background-color 0.15s ease;
     }
 
-    .toc-sidebar__item {
-        margin: 0;
-        padding: 0;
-        list-style: none;
+    .toc-sidebar .toc-sidebar__item:has(> a.is-active)::before {
+        background: var(--primary);
     }
 
-    .toc-sidebar__link {
-        display: block;
-        margin: 1px 0;
-        padding: 4px 8px;
-        border-radius: 5px;
-        color: rgba(35, 35, 35, 0.78);
+    .toc-sidebar a.toc-sidebar__link {
+        position: relative;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        overflow-wrap: anywhere;
+        padding: 4px 0;
+        color: var(--secondary);
         text-decoration: none;
-        overflow-wrap: break-word;
-        transition: color 0.12s ease, background-color 0.12s ease;
+        transition: color 0.15s ease;
     }
 
-    .toc-sidebar__link:hover {
-        color: #111;
-        background: rgba(0, 0, 0, 0.05);
+    /* h2 不缩进，h3 缩进 14px */
+    .toc-sidebar .toc-sidebar__item[data-level="3"] a.toc-sidebar__link {
+        padding-inline-start: 14px;
+    }
+
+    .toc-sidebar a.toc-sidebar__link:hover {
+        color: var(--primary);
         text-decoration: none;
     }
 
     /* 当前所在小节 */
-    .toc-sidebar__link.is-active {
-        color: #111;
-        font-weight: 500;
-        background: rgba(0, 0, 0, 0.07);
-        box-shadow: inset 2px 0 0 rgba(0, 0, 0, 0.45);
-    }
-
-    .toc-sidebar__link[data-level="1"] {
-        font-size: 13.5px;
+    .toc-sidebar a.toc-sidebar__link.is-active {
+        color: var(--primary);
         font-weight: 600;
     }
 
-    .toc-sidebar__link[data-level="2"] {
-        font-size: 13.5px;
-    }
-
-    .toc-sidebar__link[data-level="3"],
-    .toc-sidebar__link[data-level="4"],
-    .toc-sidebar__link[data-level="5"],
-    .toc-sidebar__link[data-level="6"] {
-        font-size: 12.5px;
-    }
-
     /* ---------- 深色主题 ---------- */
+    /* dark-text.css 把 --secondary 提成纯白，这里把非当前项压回灰阶保留层级；
+       投影与 wallpaper.css 里正文的深色规则保持一致 */
     :root[data-theme="dark"] .toc-sidebar {
-        background: rgba(29, 30, 32, 0.68);
-        border-color: rgba(255, 255, 255, 0.09);
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.42);
-        scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+        scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
     }
 
     :root[data-theme="dark"] .toc-sidebar::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.26);
+        background: rgba(255, 255, 255, 0.2);
     }
 
-    :root[data-theme="dark"] .toc-sidebar__title {
-        color: rgba(235, 235, 240, 0.6);
+    :root[data-theme="dark"] .toc-sidebar .toc-sidebar__list {
+        border-inline-start-color: rgba(255, 255, 255, 0.22);
     }
 
-    :root[data-theme="dark"] .toc-sidebar__list .toc-sidebar__list {
-        border-left-color: rgba(255, 255, 255, 0.12);
+    :root[data-theme="dark"] .toc-sidebar .toc-sidebar__title,
+    :root[data-theme="dark"] .toc-sidebar a.toc-sidebar__link {
+        color: rgba(255, 255, 255, 0.8);
     }
 
-    :root[data-theme="dark"] .toc-sidebar__link {
-        color: rgba(232, 232, 238, 0.75);
-    }
-
-    :root[data-theme="dark"] .toc-sidebar__link:hover {
+    :root[data-theme="dark"] .toc-sidebar a.toc-sidebar__link:hover,
+    :root[data-theme="dark"] .toc-sidebar a.toc-sidebar__link.is-active {
         color: #fff;
-        background: rgba(255, 255, 255, 0.09);
-    }
-
-    :root[data-theme="dark"] .toc-sidebar__link.is-active {
-        color: #fff;
-        background: rgba(255, 255, 255, 0.14);
-        box-shadow: inset 2px 0 0 rgba(255, 255, 255, 0.75);
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .toc-sidebar__link {
+    .toc-sidebar a.toc-sidebar__link,
+    .toc-sidebar .toc-sidebar__item::before {
         transition: none;
     }
 }

@@ -1,14 +1,18 @@
-{{- /* 递归渲染 .Fragments.Headings；Hugo 的标题层级已经嵌套好，直接按树输出 */ -}}
-{{- $depth := .depth -}}
-<ul class="toc-sidebar__list">
-    {{- range .headings }}
-    <li class="toc-sidebar__item">
-        <a class="toc-sidebar__link" data-level="{{ .Level }}" href="#{{ .ID }}">{{ .Title }}</a>
-        {{- with .Headings }}
-        {{- if lt $depth 4 }}
-        {{- partial "toc_sidebar_tree.html" (dict "headings" . "depth" (add $depth 1)) }}
-        {{- end }}
-        {{- end }}
-    </li>
-    {{- end }}
-</ul>
+{{- /* 递归输出目录条目（平铺的 <li>，缩进交给 CSS）
+       入参是 Hugo 的 .Fragments.Headings（或某个标题的 .Headings 切片）。
+       - h1 跳过，但继续下钻它的子标题（文章里的 h1 常是章节大标题）
+       - 只输出 h2 / h3；h4 及更深直接忽略 */ -}}
+{{- range . -}}
+{{- if eq .Level 1 -}}
+{{- with .Headings -}}
+{{- partial "toc_sidebar_tree.html" . -}}
+{{- end -}}
+{{- else if eq .Level 2 -}}
+<li class="toc-sidebar__item" data-level="2"><a class="toc-sidebar__link" href="#{{ .ID }}">{{ .Title }}</a></li>
+{{- with .Headings -}}
+{{- partial "toc_sidebar_tree.html" . -}}
+{{- end -}}
+{{- else if eq .Level 3 -}}
+<li class="toc-sidebar__item" data-level="3"><a class="toc-sidebar__link" href="#{{ .ID }}">{{ .Title }}</a></li>
+{{- end -}}
+{{- end -}}

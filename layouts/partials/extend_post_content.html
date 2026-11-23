@@ -1,2 +1,4 @@
-{{- /* 覆盖主题的同名 partial（主题里是空钩子）：在正文之后挂载左侧悬浮目录 */ -}}
-{{- partial "toc_sidebar.html" . -}}
+{{- /* 覆盖主题的同名 partial（主题里是空钩子）。
+       左侧目录已改为在 layouts/single.html 中挂到 .post-content 内部：
+       它要用 position: sticky 从“正文顶部”开始跟随滚动，放在正文之后做不到。
+       这里保留为空钩子，避免重复渲染。 */ -}}
