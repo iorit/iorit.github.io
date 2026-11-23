@@ -119,14 +119,24 @@
         transition: color 0.15s ease;
     }
 
-    /* h2 不缩进，h3 缩进 14px；h3 字号小 0.5px、颜色淡一档，层级更清楚 */
-    .toc-sidebar .toc-sidebar__item[data-level="3"] {
+    /* data-level 1 是一级标题；2/3 逐级缩进 14px，字号和颜色依次减弱 */
+    .toc-sidebar .toc-sidebar__item[data-level="2"] {
         --toc-item-color: color-mix(in srgb, var(--primary) 76%, transparent);
         font-size: 12.5px;
     }
 
-    .toc-sidebar .toc-sidebar__item[data-level="3"] a.toc-sidebar__link {
+    .toc-sidebar .toc-sidebar__item[data-level="2"] a.toc-sidebar__link {
         padding-inline-start: 14px;
+        font-weight: 500;
+    }
+
+    .toc-sidebar .toc-sidebar__item[data-level="3"] {
+        --toc-item-color: color-mix(in srgb, var(--primary) 64%, transparent);
+        font-size: 12px;
+    }
+
+    .toc-sidebar .toc-sidebar__item[data-level="3"] a.toc-sidebar__link {
+        padding-inline-start: 28px;
         font-weight: 500;
     }
 
@@ -161,8 +171,12 @@
         color: rgba(255, 255, 255, 0.72);
     }
 
-    :root[data-theme="dark"] .toc-sidebar .toc-sidebar__item[data-level="3"] {
+    :root[data-theme="dark"] .toc-sidebar .toc-sidebar__item[data-level="2"] {
         --toc-item-color: rgba(255, 255, 255, 0.78);
+    }
+
+    :root[data-theme="dark"] .toc-sidebar .toc-sidebar__item[data-level="3"] {
+        --toc-item-color: rgba(255, 255, 255, 0.64);
     }
 
     :root[data-theme="dark"] .toc-sidebar a.toc-sidebar__link.is-active {

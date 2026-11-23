@@ -1,18 +1,19 @@
 {{- /* 递归输出目录条目（平铺的 <li>，缩进交给 CSS）
-       入参是 Hugo 的 .Fragments.Headings（或某个标题的 .Headings 切片）。
-       - h1 跳过，但继续下钻它的子标题（文章里的 h1 常是章节大标题）
-       - 只输出 h2 / h3；h4 及更深直接忽略 */ -}}
-{{- range . -}}
-{{- if eq .Level 1 -}}
+       入参：dict "headings" <Hugo 标题树切片> "depth" <目录显示层级，从 1 开始>
+       - 文章标题（第一个 h1）在调用方移除，它的子标题从 depth=1 开始
+       - Level 0 的空标题是 Hugo 偶尔插入的占位节点：不输出，原层级下钻
+       - 只输出实际 h1/h2/h3 且带 ID 的标题；h4 及更深（连同子树）忽略
+       - data-level 用菜单深度，供 CSS 控制缩进和字号 */ -}}
+{{- $depth := .depth -}}
+{{- range .headings -}}
+{{- if lt .Level 1 -}}
 {{- with .Headings -}}
-{{- partial "toc_sidebar_tree.html" . -}}
+{{- partial "toc_sidebar_tree.html" (dict "headings" . "depth" $depth) -}}
 {{- end -}}
-{{- else if eq .Level 2 -}}
-<li class="toc-sidebar__item" data-level="2"><a class="toc-sidebar__link" href="#{{ .ID }}">{{ .Title }}</a></li>
+{{- else if and (le .Level 3) .ID -}}
+<li class="toc-sidebar__item" data-level="{{ $depth }}"><a class="toc-sidebar__link" href="#{{ .ID }}">{{ .Title }}</a></li>
 {{- with .Headings -}}
-{{- partial "toc_sidebar_tree.html" . -}}
+{{- partial "toc_sidebar_tree.html" (dict "headings" . "depth" (add $depth 1)) -}}
 {{- end -}}
-{{- else if eq .Level 3 -}}
-<li class="toc-sidebar__item" data-level="3"><a class="toc-sidebar__link" href="#{{ .ID }}">{{ .Title }}</a></li>
 {{- end -}}
 {{- end -}}

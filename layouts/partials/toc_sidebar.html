@@ -1,8 +1,9 @@
 {{- /* ============================================================
      文章左侧目录（文档站式纯文字大纲，宽屏 ≥1400px 显示）
      - 只有 params.mainSections 里的三个分区（文章/过往/随笔）的单页才渲染
-     - 只收 h2 / h3：h1 是文章标题，跳过；h4 及更深不列
-     - 没有任何 h2/h3 时整块不输出（服务端判断，不靠 CSS 隐藏）
+     - 只跳过文档里的第一个 h1（文章标题）；它下面的标题提升为目录的一级，
+       其余 h1 也照常参与，目录层级按标题树深度算（1/2/3），h4 及更深忽略
+     - 没有任何可列标题时整块不输出（先渲染再检查，服务端判断）
      - 窄屏不出现，继续使用主题自带的顶部折叠目录
      挂载：layouts/single.html（放在 .post-content 内，sticky 才能从正文顶部开始）
      样式：assets/css/extended/toc.css
@@ -10,17 +11,24 @@
      ============================================================ */ -}}
 {{- $sections := site.Params.mainSections | default (slice "posts") -}}
 {{- if and .IsPage (in $sections .Section) -}}
-{{- $hasToc := false -}}
-{{- range .Fragments.HeadingsMap -}}
-{{- if in (slice 2 3) .Level -}}{{- $hasToc = true -}}{{- end -}}
+{{- $headings := .Fragments.Headings -}}
+{{- $items := "" -}}
+{{- if $headings -}}
+{{- $first := index $headings 0 -}}
+{{- if eq $first.Level 1 -}}
+{{- with $first.Headings -}}
+{{- $items = partial "toc_sidebar_tree.html" (dict "headings" . "depth" 1) -}}
 {{- end -}}
-{{- if $hasToc -}}
+{{- $items = printf "%s%s" $items (partial "toc_sidebar_tree.html" (dict "headings" (after 1 $headings) "depth" 1)) -}}
+{{- else -}}
+{{- $items = partial "toc_sidebar_tree.html" (dict "headings" $headings "depth" 1) -}}
+{{- end -}}
+{{- end -}}
+{{- if findRE "<li" $items -}}
 <div class="toc-sidebar-wrap">
     <nav class="toc-sidebar" aria-label="文章目录">
         <p class="toc-sidebar__title">目录</p>
-        <ul class="toc-sidebar__list">
-            {{- partial "toc_sidebar_tree.html" .Fragments.Headings -}}
-        </ul>
+        <ul class="toc-sidebar__list">{{ $items | safeHTML }}</ul>
     </nav>
 </div>
 {{- $js := resources.Get "js/toc-sidebar.js" | minify | fingerprint -}}
